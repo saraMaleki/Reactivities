@@ -1,3 +1,7 @@
+using API.Extensions;
+using Application.Activities;
+using Application.Core;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Persistence;
@@ -9,12 +13,31 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<DataContext>(opt =>
-{
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
+builder.Services.AddApplicationServices(builder.Configuration);
+//send all to extensions
+// builder.Services.AddSwaggerGen();
+
+// builder.Services.AddDbContext<DataContext>(opt =>
+// {
+//     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+// });
+
+// builder.Services.AddCors(opt =>
+// {
+//     opt.AddPolicy("CorsPolicy", policy =>
+//     {
+//         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+//     });
+// });
+
+// builder.Services.AddMediatR(typeof(List.Handler).Assembly);
+// // builder.Services.AddMediatR(typeof(Details.Handler).Assembly);
+// // builder.Services.AddMediatR(typeof(Create.Handler).Assembly);
+// // builder.Services.AddMediatR(typeof(Edit.Handler).Assembly);
+
+// builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+//send all to extensions
 
 var app = builder.Build();
 using var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
@@ -42,6 +65,8 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseRouting();
+
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
