@@ -1,16 +1,17 @@
-import { ChangeEvent, FormEvent, useState } from "react";
+import { observer } from "mobx-react-lite";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, Form, Segment } from "semantic-ui-react";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { Activity } from "../../../app/models/activity";
+import { useStore } from "../../../app/stores/store";
 
-interface Props {
-  activity: Activity | undefined;
-  CloseForm: () => void;
-  EditOrCreate: (activity: Activity) => void;
-  Submitting :boolean;
-}
-
-const ActivityForm = ({ CloseForm, activity: selectedActivity, EditOrCreate,Submitting }: Props) => {
-  const initialState = selectedActivity ?? {
+const ActivityForm = () => {
+  const history = useHistory();
+  const { activityStore } = useStore();
+  const { loadActivitiy, selectedActivity, loadingInitial } = activityStore;
+  const { id } = useParams<{ id: string }>();
+  const [activity, setActivity] = useState<Activity>({
     id: "",
     title: "",
     date: "",
@@ -18,8 +19,26 @@ const ActivityForm = ({ CloseForm, activity: selectedActivity, EditOrCreate,Subm
     category: "",
     city: "",
     venue: "",
-  };
-  const [activity, setActivity] = useState(initialState);
+  });
+
+  useEffect(() => {
+    if (id) {
+      // console.log("load activity");
+      // console.log(id);
+      loadActivitiy(id).then((activity) => setActivity(activity!));
+    }
+    // else{
+    //   setActivity({
+    //     id: "",
+    //     title: "",
+    //     date: "",
+    //     description: "",
+    //     category: "",
+    //     city: "",
+    //     venue: "",
+    //   });
+    // }
+  }, [loadActivitiy, id]);
 
   const changeInputHandler = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,14 +47,18 @@ const ActivityForm = ({ CloseForm, activity: selectedActivity, EditOrCreate,Subm
     setActivity({ ...activity, [name]: value });
   };
 
-  const submitHandler = (event : FormEvent<HTMLFormElement>) => {
+  const submitHandler = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log(activity);
-    EditOrCreate(activity);
+    activityStore
+      .EditOrCreate(activity)
+      .then(() => history.replace(`/activities/${activityStore.selectedActivity?.id}`));
   };
+
+  if (loadingInitial) return <LoadingComponent content="Loading ..." />;
+
   return (
     <Segment clearing>
-      <Form onSubmit={submitHandler} autocomplete='off'>
+      <Form onSubmit={submitHandler} autoComplete="off">
         <Form.Input
           placeholder="Title"
           value={activity.title}
@@ -78,17 +101,19 @@ const ActivityForm = ({ CloseForm, activity: selectedActivity, EditOrCreate,Subm
           content="Submit"
           positive
           float="right"
-          loading={Submitting}
+          loading={activityStore.loading}
         />
         <Button
           type="button"
           content="Cancel"
           floated="right"
-          onClick={CloseForm}
+          // onClick={activityStore.closeForm}
+          as={Link}
+          to='/activities' 
         />
       </Form>
     </Segment>
   );
 };
 
-export default ActivityForm;
+export default observer(ActivityForm);
