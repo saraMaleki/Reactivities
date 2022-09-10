@@ -9,7 +9,7 @@ import { useStore } from "../../../app/stores/store";
 const ActivityForm = () => {
   const history = useHistory();
   const { activityStore } = useStore();
-  const { loadActivitiy, selectedActivity, loadingInitial } = activityStore;
+  const { loadActivitiy, loadingInitial } = activityStore;
   const { id } = useParams<{ id: string }>();
   const [activity, setActivity] = useState<Activity>({
     id: "",
