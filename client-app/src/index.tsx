@@ -3,21 +3,30 @@ import ReactDOM from "react-dom/client";
 
 import "semantic-ui-css/semantic.min.css";
 import 'react-calendar/dist/Calendar.css'
+import 'react-toastify/dist/ReactToastify.css';
 import App from "./app/layout/App";
 import reportWebVitals from "./reportWebVitals";
 
 import "./app/layout/styles.css";
 import { store, StoreContext } from "./app/stores/store";
+import { Router, } from "react-router";
+import { createBrowserHistory} from 'history';
 import { BrowserRouter } from "react-router-dom";
 
+
+ export const history= createBrowserHistory();
+// const history = useBasename(createHistory)({ basename: '/animations' })
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <StoreContext.Provider value={store}>
-    <BrowserRouter>
+    {/* <BrowserRouter>
       <App />
-    </BrowserRouter>
+    </BrowserRouter> */}
+    <Router history={history}>
+      <App />
+    </Router>
   </StoreContext.Provider>
   // <React.StrictMode>
   //   <App />

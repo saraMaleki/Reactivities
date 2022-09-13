@@ -15,6 +15,7 @@ const NavBar = () => {
           Reactivities
         </Menu.Item>
         <Menu.Item as={NavLink} to="/activities" name="activities" />
+        <Menu.Item as={NavLink} to="/errors" name="Errors" />
         <Menu.Item>
           <Button
             as={NavLink} to="/createActivity"
