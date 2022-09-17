@@ -1,5 +1,8 @@
-import { Header, Image, Item, Segment } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
+import { Link } from "react-router-dom";
+import { Button, Header, Image, Item, Segment } from "semantic-ui-react";
 import { Activity } from "../../../app/models/activity";
+import { format } from 'date-fns';
 
 const activityImageStyle = {
     filter: 'brightness(30%)'
@@ -33,7 +36,7 @@ const ActivityDetailedHeader = ({ activity }: Props) => {
                                 content={activity.title}
                                 style={{ color: 'white' }}
                             />
-                            {/* <p>{format(activity.date!, 'dd MMM yyyy')}</p> */}
+                            <p>{format(activity.date!, 'dd MMM yyyy')}</p>
                             <p>
                                 Hosted by <strong>Sara</strong>
                             </p>
@@ -43,33 +46,12 @@ const ActivityDetailedHeader = ({ activity }: Props) => {
             </Segment>
         </Segment>
         <Segment clearing attached='bottom'>
-            {/* {activity.isHost ? (
-                <>
-                    <Button
-                        
-                        floated='left'
-                        basic
-                        content={activity.isCancelled ? 'Re-activate Activity' : 'Cancel Activity'}
-                        onClick={cancelActivityToggle}
-                        loading={loading}
-                    />
-                    <Button as={Link}
-                        disabled={activity.isCancelled}
-                        to={`/manage/${activity.id}`}
-                        color='orange'
-                        floated='right'>
-                        Manage Event
-                    </Button>
-                </>
-
-            ) : activity.isGoing ? (
-                <Button loading={loading} onClick={updateAttendance}>Cancel attendance</Button>
-            ) : (
-                <Button color='teal'>
-                        Join Activity
-                </Button>
-            )} */}
+          <Button color='teal'>Join activity</Button>
+          <Button>Cancel attendance</Button>
+          <Button as={Link} to={`/manage/${activity.id}`} color='orange' floated="right">
+            Manage Event
+          </Button>
         </Segment>
     </Segment.Group>);
 }
-export default ActivityDetailedHeader;
+export default observer(ActivityDetailedHeader);
