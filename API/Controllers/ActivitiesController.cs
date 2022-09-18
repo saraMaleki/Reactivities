@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Application.Activities;
 using Domain;
-
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -25,6 +25,7 @@ namespace API
            // return await Mediator.Send(new List.Query());
             return HandleResult( await Mediator.Send(new List.Query()));
         }
+        // [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetActivity(Guid id)
         {

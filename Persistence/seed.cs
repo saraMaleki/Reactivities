@@ -3,19 +3,34 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain;
+using Microsoft.AspNetCore.Identity;
 using Persistence;
 
 namespace Persistence
 {
     public class seed
     {
-        
-    public static async Task SeedData(DataContext context)
+
+        public static async Task SeedData(DataContext context, UserManager<AppUser> userManager)
         {
-            if (context.Activities.Any()) return;
+            if (!userManager.Users.Any())
             {
-                
-                var activities = new List<Activity>
+                var users = new List<AppUser>
+                    {
+                        new AppUser{DisplayName="Bob" , UserName="bob", Email="bob@test.com"},
+                        new AppUser{DisplayName="Tom" , UserName="tom", Email="tom@test.com"},
+                        new AppUser{DisplayName="Jane" , UserName="jane", Email="jane@test.com"},
+                    };
+                foreach (var user in users)
+                {
+                    await userManager.CreateAsync(user, "Pa$$w0rd");
+                }
+
+            }
+            if (context.Activities.Any()) return;
+
+
+            var activities = new List<Activity>
                 {
                     new Activity
                     {
@@ -25,7 +40,7 @@ namespace Persistence
                         Category = "drinks",
                         City = "London",
                         Venue = "Pub",
-                       
+
                     },
                     new Activity
                     {
@@ -35,7 +50,7 @@ namespace Persistence
                         Category = "culture",
                         City = "Paris",
                         Venue = "The Louvre",
-                     
+
                     },
                     new Activity
                     {
@@ -45,7 +60,7 @@ namespace Persistence
                         Category = "music",
                         City = "London",
                         Venue = "Wembly Stadium",
-                      
+
                     },
                     new Activity
                     {
@@ -55,7 +70,7 @@ namespace Persistence
                         Category = "food",
                         City = "London",
                         Venue = "Jamies Italian",
-                     
+
                     },
                     new Activity
                     {
@@ -65,7 +80,7 @@ namespace Persistence
                         Category = "drinks",
                         City = "London",
                         Venue = "Pub",
-                      
+
                     },
                     new Activity
                     {
@@ -75,7 +90,7 @@ namespace Persistence
                         Category = "culture",
                         City = "London",
                         Venue = "British Museum",
-                      
+
                     },
                     new Activity
                     {
@@ -85,7 +100,7 @@ namespace Persistence
                         Category = "drinks",
                         City = "London",
                         Venue = "Punch and Judy",
-                       
+
                     },
                     new Activity
                     {
@@ -95,7 +110,7 @@ namespace Persistence
                         Category = "music",
                         City = "London",
                         Venue = "O2 Arena",
-                      
+
                     },
                     new Activity
                     {
@@ -105,7 +120,7 @@ namespace Persistence
                         Category = "travel",
                         City = "Berlin",
                         Venue = "All",
-                     
+
                     },
                     new Activity
                     {
@@ -115,13 +130,12 @@ namespace Persistence
                         Category = "drinks",
                         City = "London",
                         Venue = "Pub",
-                       
+
                     }
                 };
 
-                await context.Activities.AddRangeAsync(activities);
-                await context.SaveChangesAsync();
-            }
+            await context.Activities.AddRangeAsync(activities);
+            await context.SaveChangesAsync();
         }
     }
 }

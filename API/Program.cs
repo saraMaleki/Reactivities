@@ -2,8 +2,12 @@ using API.Extensions;
 using API.Middleware;
 using Application.Activities;
 using Application.Core;
+using Domain;
 using FluentValidation.AspNetCore;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Persistence;
@@ -12,13 +16,19 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddFluentValidation(config =>{
+builder.Services.AddControllers(opt => 
+{
+    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+    opt.Filters.Add(new AuthorizeFilter(policy));
+})
+.AddFluentValidation(config =>{
     config.RegisterValidatorsFromAssemblyContaining<Create>();
     });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddIdentityService(builder.Configuration);
 //send all to extensions
 // builder.Services.AddSwaggerGen();
 
@@ -49,8 +59,10 @@ var services = serviceScope.ServiceProvider;
 try
 {
     var context = services.GetRequiredService<DataContext>();
-    context.Database.Migrate();
-    await seed.SeedData(context);
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    
+    context.Database.MigrateAsync();
+    await seed.SeedData(context,userManager);
 }
 catch (Exception ex)
 {
@@ -72,6 +84,8 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 
 app.UseCors("CorsPolicy");
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
