@@ -3,6 +3,7 @@ import { Form, Label } from "semantic-ui-react";
 
 interface Props {
   name: string;
+  type?: string;
   placeholder: string;
   label?: string;
 }

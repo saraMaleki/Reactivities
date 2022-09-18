@@ -34,7 +34,7 @@ namespace API.Controllers
             var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (result.Succeeded)
             {
-                CreateUserObject(user);
+                return CreateUserObject(user);
             }
             return Unauthorized();
         }
@@ -43,11 +43,13 @@ namespace API.Controllers
         {
             if (await _useManager.Users.AnyAsync(x => x.Email == registerDto.Email))
             {
-                return BadRequest("Email taken");
+                ModelState.AddModelError("email","Email taken");
+                return ValidationProblem();
             }
             if (await _useManager.Users.AnyAsync(x => x.UserName == registerDto.Username))
             {
-                return BadRequest("username taken");
+                 ModelState.AddModelError("username","username taken");
+                return ValidationProblem();
             }
 
             var user = new AppUser
@@ -60,7 +62,7 @@ namespace API.Controllers
             var result = await _useManager.CreateAsync(user, registerDto.Password);
             if (result.Succeeded)
             {
-                CreateUserObject(user);
+                return CreateUserObject(user);
             }
             return BadRequest("problem registering user");
         }
