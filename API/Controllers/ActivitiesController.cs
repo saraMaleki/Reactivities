@@ -22,8 +22,8 @@ namespace API
         {
 
             //return await _context.Activities.ToListAsync();
-           // return await Mediator.Send(new List.Query());
-            return HandleResult( await Mediator.Send(new List.Query()));
+            // return await Mediator.Send(new List.Query());
+            return HandleResult(await Mediator.Send(new List.Query()));
         }
         // [Authorize]
         [HttpGet("{id}")]
@@ -39,16 +39,24 @@ namespace API
         {
             return HandleResult(await Mediator.Send(new Create.command { Activity = activity }));
         }
+        [Authorize(Policy="IsActivityHost")]
         [HttpPut("{id}")]
-        public async Task<ActionResult> EditActivity(Guid id, Activity activity)
+        public async Task<IActionResult> EditActivity(Guid id, Activity activity)
         {
             activity.Id = id;
             return HandleResult(await Mediator.Send(new Edit.command { Activity = activity }));
         }
+        [Authorize(Policy="IsActivityHost")]
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteActivity(Guid id)
+        public async Task<IActionResult> DeleteActivity(Guid id)
         {
             return HandleResult(await Mediator.Send(new Delete.command { Id = id }));
+        }
+
+        [HttpPost("{id}/attend")]
+        public async Task<IActionResult> Attend(Guid id)
+        {
+            return HandleResult(await Mediator.Send(new UpdateAttendance.command { Id = id }));
         }
     }
 }
