@@ -5,7 +5,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { Button, Header, Segment } from "semantic-ui-react";
 import MyTextInput from "../../../app/common/form/MyTextInput";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import { Activity } from "../../../app/models/activity";
+import { Activity, ActivityFormValues } from "../../../app/models/activity";
 import { useStore } from "../../../app/stores/store";
 import * as Yup from "yup";
 import MyTextArea from "../../../app/common/form/MyTextArea";
@@ -18,15 +18,7 @@ const ActivityForm = () => {
   const { activityStore } = useStore();
   const { loadActivitiy, loadingInitial } = activityStore;
   const { id } = useParams<{ id: string }>();
-  const [activity, setActivity] = useState<Activity>({
-    id: "",
-    title: "",
-    date: null,
-    description: "",
-    category: "",
-    city: "",
-    venue: "",
-  });
+  const [activity, setActivity] = useState<ActivityFormValues >(new ActivityFormValues());
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Title is required"),
@@ -40,7 +32,7 @@ const ActivityForm = () => {
     if (id) {
       // console.log("load activity");
       // console.log(id);
-      loadActivitiy(id).then((activity) => setActivity(activity!));
+      loadActivitiy(id).then((activity) => setActivity(new ActivityFormValues(activity)));
     }
     // else{
     //   setActivity({
@@ -62,7 +54,7 @@ const ActivityForm = () => {
   //   setActivity({ ...activity, [name]: value });
   // };
 
-  const submitFormHandler = (activity: Activity) => {
+  const submitFormHandler = (activity: ActivityFormValues) => {
     //event.preventDefault();
     activityStore
       .EditOrCreate(activity)
@@ -108,7 +100,7 @@ const ActivityForm = () => {
               content="Submit"
               positive
               float="right"
-              loading={activityStore.loading}
+              loading={isSubmitting}
             />
             <Button
               type="button"
