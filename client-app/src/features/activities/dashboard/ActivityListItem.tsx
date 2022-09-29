@@ -16,13 +16,13 @@ const ActivityListItem = ({ activity }: Props) => {
         <Label attached='top' color='red' content='Cancelled' style={{textAlign:'center'}}></Label>}
         <Item.Group>
           <Item>
-            <Item.Image size="tiny" circular src="/assets/user.png" />
+            <Item.Image size="tiny" circular src={activity.host?.image || "/assets/user.png"} />
             <Item.Content>
               <Item.Header as={Link} to={`/activities/${activity.id}`}>
                 {activity.title}
               </Item.Header>
               <Item.Description>
-                Hosted By {activity.host?.displayName}
+                Hosted By <Link to={`/profiles/${activity.hostUsername}`}>{activity.host?.displayName}</Link> 
                 {activity.isHost && (
                   <Item.Description>
                     <Label basic color="orange">
