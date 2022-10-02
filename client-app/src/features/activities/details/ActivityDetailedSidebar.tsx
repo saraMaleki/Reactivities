@@ -41,12 +41,14 @@ const ActivityDetailedSidebar = ({activity : {attendees, host} }: Props) => {
                     {attendee.displayName}
                   </Link>
                 </Item.Header>
+                {attendee.following && 
                 <Item.Extra style={{ color: "orange" }}>Following</Item.Extra>
+                }  
               </Item.Content>
             </Item>
           ))}
         </List>
-      </Segment>
+      </Segment> 
     </>
   );
 };

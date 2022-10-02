@@ -4,9 +4,7 @@ import { Activity, ActivityFormValues } from "../models/activity";
 import { history } from "../..";
 import { store } from "../stores/store";
 import { User, UserFormValues } from "../models/user";
-import CommonStore from "../stores/commonStore";
 import { Profile, Photo } from "../models/profile";
-
 
 const sleep = (delay: number) => {
   return new Promise((resolve) => {
@@ -86,11 +84,12 @@ const requests = {
 const Activities = {
   list: () => requests.get<Activity[]>("/activities"),
   details: (id: string) => requests.get<Activity>(`/activities/${id}`),
-  create: (activity: ActivityFormValues) => requests.post<void>("/activities", activity),
+  create: (activity: ActivityFormValues) =>
+    requests.post<void>("/activities", activity),
   update: (activity: ActivityFormValues) =>
     requests.put<void>(`/activities/${activity.id}`, activity),
   delete: (id: string) => requests.del<void>(`/activities/${id}`),
-  attend : (id : string) => requests.post<void>(`/activities/${id}/attend`,{}),
+  attend: (id: string) => requests.post<void>(`/activities/${id}/attend`, {}),
 };
 const Account = {
   current: () => requests.get<User>("/account"),
@@ -98,23 +97,29 @@ const Account = {
   register: (user: UserFormValues) =>
     requests.post<User>("/account/register", user),
 };
-const Profiles ={
-  get: (username:string) => requests.get<Profile>(`/profiles/${username}`),
-  uploadPhoto : (file:Blob) =>{
+const Profiles = {
+  get: (username: string) => requests.get<Profile>(`/profiles/${username}`),
+  uploadPhoto: (file: Blob) => {
     let formData = new FormData();
-    formData.append('File',file);
-    return axios.post<Photo>('/photos',formData,{
-      headers:{'Content-type': 'multipart/from-data'}
-    })
+    formData.append("File", file);
+    return axios.post<Photo>("/photos", formData, {
+      headers: { "Content-type": "multipart/from-data" },
+    });
   },
-  setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`,{}),
-  deletePhoto: (id: string) => requests.del(`/photos/${id}`)
-}
+  setMainPhoto: (id: string) => requests.post(`/photos/${id}/setMain`, {}),
+  deletePhoto: (id: string) => requests.del(`/photos/${id}`),
+  updateProfile: (profile: Partial<Profile>) =>
+    requests.put(`/profiles`, profile),
+  updateFollowing: (username: string) =>
+    requests.post(`/follow/${username}`, {}),
+    listFollowings: (username : string, predicate:string) =>
+    requests.get<Profile[]>(`/follow/${username}?predicate=${predicate}`)
+};
 
 const agent = {
   Activities,
   Account,
-  Profiles
+  Profiles,
 };
 
 export default agent;
