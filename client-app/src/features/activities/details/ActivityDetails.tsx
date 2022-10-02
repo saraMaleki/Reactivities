@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Grid} from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
 import { useStore } from "../../../app/stores/store";
 import ActivityDetailedChat from "./ActivityDetailedChat";
@@ -15,6 +15,7 @@ const ActivityDetails = () => {
     selectedActivity: activity,
     loadActivitiy,
     loadingInitial,
+    clearSelectedActivity,
   } = activityStore;
 
   const { id } = useParams<{ id: string }>();
@@ -26,18 +27,19 @@ const ActivityDetails = () => {
 
   useEffect(() => {
     if (id) loadActivitiy(id);
-  }, [id, loadActivitiy]);
+    return () => clearSelectedActivity();
+  }, [id, loadActivitiy,clearSelectedActivity]);
 
   if (loadingInitial || !activity) return <LoadingComponent />;
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ActivityDetailedHeader activity={activity}/>
-        <ActivityDetailedInfo activity={activity}/>
-        <ActivityDetailedChat activityId={activity.id}/>
+        <ActivityDetailedHeader activity={activity} />
+        <ActivityDetailedInfo activity={activity} />
+        <ActivityDetailedChat activityId={activity.id} />
       </Grid.Column>
       <Grid.Column width={6}>
-        <ActivityDetailedSidebar activity={activity}/>
+        <ActivityDetailedSidebar activity={activity} />
       </Grid.Column>
     </Grid>
     // <Card fluid>
